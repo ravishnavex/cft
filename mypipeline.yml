@@ -73,7 +73,7 @@ Resources:
                 - Name: integration_stack_output
               Configuration:
                 ActionMode: CREATE_UPDATE
-                TemplatePath: "instance.yml"
+                TemplatePath: "source/instance.yml"
                 Capabilities: CAPABILITY_IAM
                 RoleArn: !Sub arn:aws:iam::${IntegrationAccountId}:role/navex-deploymentservice
                 StackName: !Sub "${ProjectName}-${GitHubRepo}-tftest"
