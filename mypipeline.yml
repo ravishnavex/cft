@@ -33,9 +33,6 @@ Resources:
           ArtifactStore:
             Type: S3
             Location: twtesting
-            # EncryptionKey: 
-            #   Id: !Sub "arn:aws:kms:ap-south-1:${AWS::AccountId}:alias/navex-pipeline"
-            #   Type: KMS
         
       Stages:
         - Name: Source
@@ -74,7 +71,7 @@ Resources:
                 ActionMode: CREATE_UPDATE
                 TemplatePath: "after-source::instance.yml"
                 Capabilities: CAPABILITY_IAM
-                RoleArn: !Sub arn:aws:iam::${IntegrationAccountId}:role/navex-deploymentservice
+                RoleArn: arn:aws:iam::552242929734:role/twtest
                 StackName: !Sub "${ProjectName}-${GitHubRepo}-tftest"
                 #TemplateConfiguration: source::aws-inf/template.tags.json
                 OutputFileName: output.json
