@@ -1,0 +1,103 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Pipeline for cloudformation file deployment
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: cfproject
+  GitHubOwner:
+    Type: String
+    Default: ravishnavex
+  GitHubRepo:
+    Type: String
+    Default: cft
+  GitHubToken:
+    Type: String
+    NoEcho: True
+  GitHubBranch:
+    Type: String
+    Default: master
+  IntegrationAccountId:
+   Type: String
+   Default: 552242929734
+
+Resources:
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      Name: !Ref AWS::StackName
+      RoleArn: arn:aws:iam::552242929734:role/twtest
+      ArtifactStores:
+        - Region: ap-south-1
+          ArtifactStore:
+            Type: S3
+            Location: twtesting
+            # EncryptionKey: 
+            #   Id: !Sub "arn:aws:kms:ap-south-1:${AWS::AccountId}:alias/navex-pipeline"
+            #   Type: KMS
+        
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: !Sub Pull_${GitHubRepo}
+              RunOrder: 1
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: "1"
+                Provider: GitHub
+              Configuration:
+                Owner: !Ref GitHubOwner
+                Repo: !Ref GitHubRepo
+                Branch: !Ref GitHubBranch
+                OAuthToken: !Ref GitHubToken
+                PollForSourceChanges: false
+              OutputArtifacts:
+                - Name: source    
+        - Name: Deploy
+          Actions:
+            - Name: Deploy
+              RunOrder: 1
+              Region: ap-south-1
+              #RoleArn: arn:aws:iam::552242929734:role/twtest
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: "1"
+                Provider: CloudFormation
+              InputArtifacts:
+                - Name: source
+              
+              OutputArtifacts:
+                - Name: integration_stack_output
+              Configuration:
+                ActionMode: CREATE_UPDATE
+                TemplatePath: "instance.yml"
+                Capabilities: CAPABILITY_IAM
+                RoleArn: !Sub arn:aws:iam::${IntegrationAccountId}:role/navex-deploymentservice
+                StackName: !Sub "${ProjectName}-${GitHubRepo}-tftest"
+                #TemplateConfiguration: source::aws-inf/template.tags.json
+                OutputFileName: output.json
+               
+  # GitHubTokenSsm:
+  #   Type: Custom::SsmGetParameter
+  #   Properties:
+  #     Name: /mobile/github-access-token
+  #     ServiceToken:
+  #       !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:cloudformation-get-ssm-param
+
+  PipelineWebHook:
+    Type: AWS::CodePipeline::Webhook
+    Properties:
+      Authentication: GITHUB_HMAC
+      AuthenticationConfiguration:
+        #SecretToken: !GetAtt GitHubTokenSsm.Parameter.Value
+        SecretToken: !Ref GitHubToken
+      RegisterWithThirdParty: true
+      Filters:
+        - JsonPath: "$.ref"
+          MatchEquals: !Sub refs/heads/${GitHubBranch}
+      TargetPipeline: !Ref Pipeline
+      TargetPipelineVersion: !GetAtt Pipeline.Version
+      TargetAction: !Sub Pull_${GitHubRepo}

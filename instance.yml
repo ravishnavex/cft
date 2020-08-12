@@ -1,4 +1,7 @@
----
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: Resource creation
+
 Resources:
   MyInstance:
     Type: AWS::EC2::Instance
