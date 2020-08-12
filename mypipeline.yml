@@ -54,7 +54,7 @@ Resources:
                 OAuthToken: !Ref GitHubToken
                 PollForSourceChanges: false
               OutputArtifacts:
-                - Name: source    
+                - Name: after-source
         - Name: Deploy
           Actions:
             - Name: Deploy
@@ -67,13 +67,12 @@ Resources:
                 Version: "1"
                 Provider: CloudFormation
               InputArtifacts:
-                - Name: source
-              
+                - Name: after-source 
               OutputArtifacts:
                 - Name: integration_stack_output
               Configuration:
                 ActionMode: CREATE_UPDATE
-                TemplatePath: "source::instance.yml"
+                TemplatePath: "after-source::instance.yml"
                 Capabilities: CAPABILITY_IAM
                 RoleArn: !Sub arn:aws:iam::${IntegrationAccountId}:role/navex-deploymentservice
                 StackName: !Sub "${ProjectName}-${GitHubRepo}-tftest"
