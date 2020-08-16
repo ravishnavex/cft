@@ -20,6 +20,7 @@ Resources:
           
           cd /home/ec2-user
           wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz
+          sleep 10
           # wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz.sig
           # gpg --verify mediawiki-1.34.2.tar.gz.sig mediawiki-1.34.2.tar.gz
           cd /var/www
@@ -40,8 +41,8 @@ Resources:
 
           # Firewall configuration enabled
           systemctl start firewalld
-          #firewall-cmd --permanent --zone=public --add-service=http
-          #firewall-cmd --permanent --zone=public --add-service=https
+          firewall-cmd --permanent --zone=public --add-service=http
+          firewall-cmd --permanent --zone=public --add-service=https
           firewall-cmd --zone=public --add-port=80/tcp --permanent
           firewall-cmd --reload
           systemctl restart firewalld
