@@ -20,8 +20,8 @@ Resources:
           
           cd /home/ec2-user
           wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz
-          wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz.sig
-          gpg --verify mediawiki-1.34.2.tar.gz.sig mediawiki-1.34.2.tar.gz
+          # wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz.sig
+          # gpg --verify mediawiki-1.34.2.tar.gz.sig mediawiki-1.34.2.tar.gz
           cd /var/www
           tar -zxf /home/ec2-user/mediawiki-1.34.2.tar.gz
           ln -s mediawiki-1.34.2/ mediawiki
@@ -29,8 +29,10 @@ Resources:
           # Configure mediawiki
 
           cd /etc/httpd/conf
-          sed 's+DocumentRoot "/var/www/html"+DocumentRoot "/var/www/mediawiki"+g' httpd.conf
-          sed 's+DirectoryIndex index.html+DirectoryIndex index.php+g' httpd.conf
+          sed -i 's+DocumentRoot "/var/www/html"+DocumentRoot "/var/www/mediawiki"+g' httpd.conf
+          sed -i 's+<Directory "/var/www">+<Directory "/var/www/mediawiki">+g' httpd.conf
+          sed -i 's+<Directory "/var/www/html">+<Directory "/var/www/mediawiki">+g' httpd.conf
+          sed -i 's+DirectoryIndex index.html+DirectoryIndex index.php+g' httpd.conf
 
           # Service httpd restart
         
@@ -38,6 +40,8 @@ Resources:
           systemctl start firewalld
           firewall-cmd --permanent --zone=public --add-service=http
           firewall-cmd --permanent --zone=public --add-service=https
+          firewall-cmd --zone=public --add-port=80/tcp --permanent
+          firewall-cmd --reload
           systemctl restart firewalld
       SecurityGroups:
         - !Ref SSHSecurityGroup
