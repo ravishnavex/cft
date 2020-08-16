@@ -35,7 +35,9 @@ Resources:
           sed -i 's+DirectoryIndex index.html+DirectoryIndex index.php+g' httpd.conf
 
           # Service httpd restart
-        
+
+          systemctl start httpd
+
           # Firewall configuration enabled
           systemctl start firewalld
           firewall-cmd --permanent --zone=public --add-service=http
