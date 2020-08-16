@@ -13,7 +13,17 @@ Resources:
       UserData: 
         Fn::Base64: !Sub |
           #!bin/bash
-          echo y | dnf install httpd php php-mysqlnd php-gd php-xml php-mbstring php-json
+          echo y | dnf install httpd wget php php-mysqlnd php-gd php-xml php-mbstring php-json
+          chkconfig httpd on
+          cd /home/ec2-user
+          wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz
+          wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz.sig
+          gpg --verify mediawiki-1.34.2.tar.gz.sig mediawiki-1.34.2.tar.gz
+          cd /var/www
+          tar -zxf /home/username/mediawiki-1.34.2.tar.gz
+          ln -s mediawiki-1.34.2/ mediawiki
+
+         # service httpd restart
       SecurityGroups:
         - !Ref SSHSecurityGroup
         - !Ref ServerSecurityGroup

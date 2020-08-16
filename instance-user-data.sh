@@ -15,4 +15,19 @@ echo y | dnf install httpd php php-mysqlnd php-gd php-xml php-mbstring php-json
 systemctl start mariadb
 mysql_secure_installation
 
+# Autostart webserver
+
+chkconfig httpd on
+
+
+
+# Download Mediawiki
+
+Download MediaWiki
+
+cd /home/ec2-user
+wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz
+
+
+
       
