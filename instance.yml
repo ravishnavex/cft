@@ -16,7 +16,7 @@ Resources:
           echo y | dnf install httpd wget firewalld php php-mysqlnd php-gd php-xml php-mbstring php-json
           chkconfig httpd on
 
-         # Download MediaWiki
+          # Download MediaWiki
           
           cd /home/ec2-user
           wget https://releases.wikimedia.org/mediawiki/1.34/mediawiki-1.34.2.tar.gz
@@ -26,15 +26,15 @@ Resources:
           tar -zxf /home/ec2-user/mediawiki-1.34.2.tar.gz
           ln -s mediawiki-1.34.2/ mediawiki
         
-         # Configure mediawiki
+          # Configure mediawiki
 
           cd /etc/httpd/conf
           sed 's+DocumentRoot "/var/www""+DocumentRoot "/var/www/mediawiki+g' httpd.conf
           sed 's+DirectoryIndex index.html+DocumentRoot "DirectoryIndex index.php+g' httpd.conf
 
-         # Service httpd restart
+          # Service httpd restart
         
-         # Firewall configuration enabled
+          # Firewall configuration enabled
           systemctl start firewalld
           firewall-cmd --permanent --zone=public --add-service=http
           firewall-cmd --permanent --zone=public --add-service=https
