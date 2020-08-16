@@ -29,8 +29,8 @@ Resources:
           # Configure mediawiki
 
           cd /etc/httpd/conf
-          sed 's+DocumentRoot "/var/www""+DocumentRoot "/var/www/mediawiki+g' httpd.conf
-          sed 's+DirectoryIndex index.html+DocumentRoot "DirectoryIndex index.php+g' httpd.conf
+          sed 's+DocumentRoot "/var/www/html"+DocumentRoot "/var/www/mediawiki"+g' httpd.conf
+          sed 's+DirectoryIndex index.html+DirectoryIndex index.php+g' httpd.conf
 
           # Service httpd restart
         
